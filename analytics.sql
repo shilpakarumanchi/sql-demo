@@ -259,12 +259,58 @@ Find the total sales in usd for each account. You should include two columns - t
   ON a.id = o.account_id
   GROUP BY account_name;
 
-Via what channel did the most recent (latest) web_event occur, which account was associated with this web_event? Your query should return only three values - the date, channel, and account name.
+Via what channel did the most recent (latest) web_event occur, which account was associated with this web_event? 
+  Your query should return only three values - the date, channel, and account name.
+  SELECT w.channel, w.occurred_at date, a.name account_name
+  FROM web_events w
+  JOIN accounts a
+  ON a.id=w.account_id
+  ORDER BY date DESC
+  LIMIT 1;
 
-Find the total number of times each type of channel from the web_events was used. Your final table should have two columns - the channel and the number of times the channel was used.
-
+Find the total number of times each type of channel from the web_events was used. 
+  Your final table should have two columns - the channel and the number of times the channel was used.
+SELECT channel, COUNT(*)
+  FROM web_events
+  GROUP BY channel;
+  
 Who was the primary contact associated with the earliest web_event?
+  SELECT a.primary_poc primary_poc
+  FROM web_events w
+  JOIN accounts a
+  ON a.id=w.account_id
+  ORDER BY w.occurred_at
+  LIMIT 1; 
 
-What was the smallest order placed by each account in terms of total usd. Provide only two columns - the account name and the total usd. Order from smallest dollar amounts to largest.
+What was the smallest order placed by each account in terms of total usd. 
+  Provide only two columns - the account name and the total usd. Order from smallest dollar amounts to largest.
+  SELECT MIN(o.total_usd) smallest_order, a.name
+  FROM orders o
+  JOIN accounts a
+  ON o.account_id=a.id
+  GROUP BY a.name
+  ORDER BY smallest_order;
 
-Find the number of sales reps in each region. Your final table should have two columns - the region and the number of sales_reps. Order from fewest reps to most reps.
+Find the number of sales reps in each region. 
+  Your final table should have two columns - the region and the number of sales_reps. Order from fewest reps to most reps.
+  SELECT r.name region, COUNT(DISTINCT(s.name)) number_of_salesreps
+  FROM region r
+  JOIN sales_reps s
+  ON r.id =s.region_id
+  GROUP BY region
+  ORDER BY number_of_salesreps;
+  
+For each account, determine the average amount of each type of paper they purchased across their orders. 
+  Your result should have four columns - one for the account name and one for the average quantity purchased for each of the paper types for each account.
+
+
+For each account, determine the average amount spent per order on each paper type. 
+  Your result should have four columns - one for the account name and one for the average amount spent on each paper type.
+
+
+Determine the number of times a particular channel was used in the web_events table for each sales rep.
+  Your final table should have three columns - the name of the sales rep, the channel, and the number of occurrences. Order your table with the highest number of occurrences first.
+
+
+Determine the number of times a particular channel was used in the web_events table for each region. 
+  Your final table should have three columns - the region name, the channel, and the number of occurrences. Order your table with the highest number of occurrences first.
